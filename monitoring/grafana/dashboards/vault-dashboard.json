@@ -1,0 +1,538 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "ETH Vault Real-Time Monitoring",
+    "tags": ["ethereum", "defi", "vault", "monitoring"],
+    "style": "dark",
+    "timezone": "browser",
+    "refresh": "5s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "💰 Total ETH Locked",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "vault_total_eth_locked",
+            "refId": "A",
+            "legendFormat": "ETH Locked"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 4,
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 10
+                },
+                {
+                  "color": "red",
+                  "value": 100
+                }
+              ]
+            },
+            "mappings": [],
+            "custom": {
+              "displayMode": "basic"
+            }
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "value_and_name",
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "id": 2,
+        "title": "✅ Transaction Success Rate",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "vault_transaction_success_rate * 100",
+            "refId": "A",
+            "legendFormat": "Success Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2,
+            "color": {
+              "mode": "thresholds"
+            },
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "red",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 90
+                },
+                {
+                  "color": "green",
+                  "value": 95
+                }
+              ]
+            }
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "value_and_name",
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 8,
+          "y": 0
+        }
+      },
+      {
+        "id": 3,
+        "title": "👥 Total Depositors",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "vault_total_depositors",
+            "refId": "A",
+            "legendFormat": "Unique Users"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0,
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "value_and_name",
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 8,
+          "x": 16,
+          "y": 0
+        }
+      },
+      {
+        "id": 4,
+        "title": "📈 Total ETH Locked Over Time",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "vault_total_eth_locked",
+            "refId": "A",
+            "legendFormat": "Total ETH Locked"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 4,
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "barAlignment": 0,
+              "lineWidth": 3,
+              "fillOpacity": 20,
+              "gradientMode": "opacity",
+              "spanNulls": false,
+              "insertNulls": false,
+              "showPoints": "never",
+              "pointSize": 5,
+              "stacking": {
+                "mode": "none",
+                "group": "A"
+              },
+              "axisPlacement": "auto",
+              "axisLabel": "ETH",
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "vis": false
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            }
+          }
+        },
+        "options": {
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          },
+          "legend": {
+            "displayMode": "visible",
+            "placement": "bottom"
+          }
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        }
+      },
+      {
+        "id": 5,
+        "title": "📊 Transaction Success Rate Over Time",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "vault_transaction_success_rate * 100",
+            "refId": "A",
+            "legendFormat": "Success Rate %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2,
+            "min": 0,
+            "max": 100,
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "smooth",
+              "barAlignment": 0,
+              "lineWidth": 3,
+              "fillOpacity": 20,
+              "gradientMode": "opacity",
+              "spanNulls": false,
+              "insertNulls": false,
+              "showPoints": "never",
+              "pointSize": 5,
+              "stacking": {
+                "mode": "none",
+                "group": "A"
+              },
+              "axisPlacement": "auto",
+              "axisLabel": "Success %",
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "vis": false
+              },
+              "thresholdsStyle": {
+                "mode": "line"
+              }
+            },
+            "thresholds": {
+              "steps": [
+                {
+                  "color": "transparent",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 90
+                },
+                {
+                  "color": "yellow",
+                  "value": 95
+                },
+                {
+                  "color": "green",
+                  "value": 98
+                }
+              ]
+            }
+          }
+        },
+        "options": {
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          },
+          "legend": {
+            "displayMode": "visible",
+            "placement": "bottom"
+          }
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 12,
+          "x": 12,
+          "y": 8
+        }
+      },
+      {
+        "id": 6,
+        "title": "🔄 Transaction Rate (per minute)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(vault_transactions_total[1m]) * 60",
+            "refId": "A",
+            "legendFormat": "{{type}} transactions/min"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps",
+            "decimals": 2,
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "drawStyle": "line",
+              "lineInterpolation": "linear",
+              "barAlignment": 0,
+              "lineWidth": 2,
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "spanNulls": false,
+              "insertNulls": false,
+              "showPoints": "never",
+              "pointSize": 5,
+              "stacking": {
+                "mode": "none",
+                "group": "A"
+              },
+              "axisPlacement": "auto",
+              "axisLabel": "Transactions/min",
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "vis": false
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            }
+          }
+        },
+        "options": {
+          "tooltip": {
+            "mode": "multi",
+            "sort": "none"
+          },
+          "legend": {
+            "displayMode": "visible",
+            "placement": "bottom"
+          }
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 18
+        }
+      },
+      {
+        "id": 7,
+        "title": "💎 Current APY & Reward Multiplier",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "vault_reward_multiplier / 100",
+            "refId": "A",
+            "legendFormat": "APY"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 2,
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "value_and_name",
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 12,
+          "y": 18
+        }
+      },
+      {
+        "id": 8,
+        "title": "🔗 Network Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "ethereum_block_number",
+            "refId": "A",
+            "legendFormat": "Current Block"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "decimals": 0,
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        },
+        "options": {
+          "reduceOptions": {
+            "values": false,
+            "calcs": ["lastNotNull"],
+            "fields": ""
+          },
+          "orientation": "auto",
+          "textMode": "value_and_name",
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "center"
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 18,
+          "y": 18
+        }
+      },
+      {
+        "id": 9,
+        "title": "📋 Vault Statistics Table",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "vault_total_eth_locked",
+            "refId": "A",
+            "legendFormat": "Total ETH Locked",
+            "format": "table",
+            "instant": true
+          },
+          {
+            "expr": "vault_total_depositors",
+            "refId": "B",
+            "legendFormat": "Total Depositors",
+            "format": "table",
+            "instant": true
+          },
+          {
+            "expr": "vault_reward_multiplier",
+            "refId": "C",
+            "legendFormat": "Reward Multiplier (BP)",
+            "format": "table",
+            "instant": true
+          },
+          {
+            "expr": "vault_transaction_success_rate * 100",
+            "refId": "D",
+            "legendFormat": "Success Rate (%)",
+            "format": "table",
+            "instant": true
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "align": "center",
+              "displayMode": "auto"
+            }
+          }
+        },
+        "options": {
+          "showHeader": true
+        },
+        "gridPos": {
+          "h": 6,
+          "w": 24,
+          "x": 0,
+          "y": 26
+        }
+      }
+    ],
+    "schemaVersion": 30,
+    "version": 1,
+    "links": [
+      {
+        "title": "Vault Contract on Etherscan",
+        "url": "https://sepolia.etherscan.io/address/0xEAebE827C8A3A4E98dFA802FC719eeBe46f06276",
+        "type": "link",
+        "icon": "external link"
+      },
+      {
+        "title": "Frontend Dashboard",
+        "url": "http://localhost:3001",
+        "type": "link",
+        "icon": "dashboard"
+      }
+    ]
+  }
+}

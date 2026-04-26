@@ -1,0 +1,35 @@
+:root {
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #e6edf6;
+  background: #081019;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  --text-primary: #e6edf6;
+  --text-secondary: #9fb0c3;
+  --text-muted: #6f8499;
+  --border-color: rgba(159, 176, 195, 0.16);
+}
+
+html {
+  min-width: 320px;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+#root {
+  width: 100%;
+  margin: 0 auto;
+}

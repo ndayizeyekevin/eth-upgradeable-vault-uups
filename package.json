@@ -1,0 +1,35 @@
+{
+  "name": "eth-vault-project",
+  "version": "1.0.0",
+  "description": "Upgradeable ETH Vault with comprehensive auditing, frontend, and monitoring",
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "stop": "bash scripts/stop.sh",
+    "dev": "docker compose up --build",
+    "build": "docker compose build",
+    "docker:down": "docker compose down -v",
+    "docker:logs": "docker compose logs -f",
+    "test": "cd contracts && npm test",
+    "audit": "cd contracts && node scripts/audit.js",
+    "deploy": "cd contracts && npx hardhat run scripts/deploy.js --network localhost",
+    "upgrade": "cd contracts && npx hardhat run scripts/upgrade.js --network localhost"
+  },
+  "keywords": [
+    "ethereum",
+    "defi",
+    "vault",
+    "upgradeable",
+    "uups",
+    "hardhat",
+    "react",
+    "monitoring"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "ethers": "^6.16.0"
+  }
+}

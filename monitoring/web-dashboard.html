@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETH Vault Monitoring Console</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg: #081019;
+            --panel: rgba(13, 22, 34, 0.92);
+            --panel-soft: rgba(255, 255, 255, 0.03);
+            --border: rgba(159, 176, 195, 0.16);
+            --text: #e6edf6;
+            --text-soft: #9fb0c3;
+            --text-muted: #6f8499;
+            --teal: #2dd4bf;
+            --teal-deep: #0f766e;
+            --amber: #ffb74d;
+            --danger: #f87171;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", sans-serif;
+            min-height: 100vh;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(38, 166, 154, 0.22), transparent 28%),
+                radial-gradient(circle at top right, rgba(255, 184, 77, 0.14), transparent 24%),
+                linear-gradient(180deg, #081019 0%, #0d1622 48%, #0a1118 100%);
+        }
+
+        .page {
+            width: min(1380px, calc(100% - 2rem));
+            margin: 0 auto;
+            padding: 1.5rem 0 2.5rem;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.5rem 0 1.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .eyebrow {
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        h1 {
+            margin-top: 0.5rem;
+            font-size: clamp(2.2rem, 3vw, 3.4rem);
+            line-height: 0.95;
+        }
+
+        .subtitle {
+            margin-top: 0.8rem;
+            color: var(--text-soft);
+            max-width: 56ch;
+            line-height: 1.65;
+        }
+
+        .status-box {
+            min-width: 240px;
+            padding: 0.95rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            color: var(--text-soft);
+            font-size: 0.92rem;
+        }
+
+        .status-indicator {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-online {
+            background: var(--teal);
+            box-shadow: 0 0 12px rgba(45, 212, 191, 0.45);
+        }
+
+        .status-offline {
+            background: var(--danger);
+        }
+
+        .summary-grid,
+        .info-grid,
+        .charts-grid {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .summary-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-top: 1.5rem;
+        }
+
+        .charts-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            margin-top: 1.25rem;
+        }
+
+        .info-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            margin-top: 1.25rem;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: linear-gradient(180deg, var(--panel), rgba(9, 16, 26, 0.94));
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+            padding: 1.35rem;
+        }
+
+        .label {
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.74rem;
+            font-weight: 700;
+        }
+
+        .metric-value {
+            margin-top: 0.7rem;
+            font-size: clamp(1.7rem, 2vw, 2.5rem);
+            font-weight: 700;
+        }
+
+        .metric-unit,
+        .metric-note,
+        .chart-title,
+        .info-card p,
+        .last-updated {
+            color: var(--text-soft);
+        }
+
+        .metric-note {
+            margin-top: 0.45rem;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
+
+        .chart-card canvas {
+            margin-top: 1rem;
+        }
+
+        .chart-title,
+        .info-title {
+            margin-top: 0.55rem;
+            font-size: 1.2rem;
+        }
+
+        .info-list {
+            display: grid;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 0.85rem 0.95rem;
+            border-radius: 6px;
+            background: var(--panel-soft);
+        }
+
+        .info-label {
+            color: var(--text-soft);
+        }
+
+        .info-value {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .mono {
+            font-family: Consolas, monospace;
+            font-size: 0.82rem;
+            word-break: break-all;
+        }
+
+        .link {
+            color: var(--teal);
+            text-decoration: none;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        #recentEvents {
+            display: grid;
+            gap: 0.65rem;
+            margin-top: 1rem;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .event-row {
+            padding: 0.75rem 0.9rem;
+            border-radius: 6px;
+            background: var(--panel-soft);
+            color: var(--text-soft);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .event-time {
+            color: var(--text-muted);
+            margin-right: 0.45rem;
+        }
+
+        .last-updated {
+            margin-top: 1.2rem;
+            text-align: right;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 1160px) {
+            .summary-grid,
+            .info-grid,
+            .charts-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 760px) {
+            .page {
+                width: min(100% - 1rem, 1380px);
+                padding-top: 1rem;
+            }
+
+            .topbar {
+                flex-direction: column;
+            }
+
+            .summary-grid,
+            .info-grid,
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-item {
+                flex-direction: column;
+            }
+
+            .last-updated {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <header class="topbar">
+            <div>
+                <div class="eyebrow">Monitoring Console</div>
+                <h1>ETH Vault Operations Board</h1>
+                <p class="subtitle">
+                    Standalone monitoring surface for vault activity, chain status, and local service links.
+                    This page keeps the lightweight Chart.js view while matching the updated frontend style.
+                </p>
+            </div>
+            <div class="status-box">
+                <div class="eyebrow">Service status</div>
+                <div class="status-row" style="margin-top: 0.6rem;">
+                    <span class="status-indicator status-online" id="statusIndicator"></span>
+                    <span id="statusText">Connected to Sepolia Testnet</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="summary-grid">
+            <article class="card">
+                <div class="label">Total ETH Locked</div>
+                <div class="metric-value" id="totalEthLocked">0.0000</div>
+                <div class="metric-unit">ETH</div>
+                <div class="metric-note">Current vault TVL from the monitoring feed.</div>
+            </article>
+
+            <article class="card">
+                <div class="label">Transaction Success Rate</div>
+                <div class="metric-value" id="successRate">100.00</div>
+                <div class="metric-unit">%</div>
+                <div class="metric-note">Synthetic activity stream used for this standalone board.</div>
+            </article>
+
+            <article class="card">
+                <div class="label">Total Depositors</div>
+                <div class="metric-value" id="totalDepositors">0</div>
+                <div class="metric-unit">Wallets</div>
+                <div class="metric-note">Estimated active depositors on the selected contract.</div>
+            </article>
+
+            <article class="card">
+                <div class="label">Current APY</div>
+                <div class="metric-value" id="currentAPY">5.00</div>
+                <div class="metric-unit">%</div>
+                <div class="metric-note">Reward multiplier rendered as an annualized rate.</div>
+            </article>
+        </section>
+
+        <section class="charts-grid">
+            <article class="card chart-card">
+                <div class="label">Time Series</div>
+                <h2 class="chart-title">ETH Locked Over Time</h2>
+                <canvas id="ethLockedChart" width="400" height="200"></canvas>
+            </article>
+
+            <article class="card chart-card">
+                <div class="label">Time Series</div>
+                <h2 class="chart-title">Transaction Success Rate</h2>
+                <canvas id="successRateChart" width="400" height="200"></canvas>
+            </article>
+        </section>
+
+        <section class="info-grid">
+            <article class="card info-card">
+                <div class="label">Contract</div>
+                <h2 class="info-title">Deployment Details</h2>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">Version</span>
+                        <span class="info-value" id="contractVersion">1.0.0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Address</span>
+                        <span class="info-value mono">0xEAebE827C8A3A4E98dFA802FC719eeBe46f06276</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Network</span>
+                        <span class="info-value">Sepolia Testnet</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Block</span>
+                        <span class="info-value" id="blockNumber">-</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card info-card">
+                <div class="label">Transactions</div>
+                <h2 class="info-title">Activity Stats</h2>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">Total</span>
+                        <span class="info-value" id="totalTransactions">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Successful</span>
+                        <span class="info-value" id="successfulTransactions">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Failed</span>
+                        <span class="info-value" id="failedTransactions">0</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Average Deposit</span>
+                        <span class="info-value" id="avgDepositSize">0.0000 ETH</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card info-card">
+                <div class="label">Navigation</div>
+                <h2 class="info-title">Local Services</h2>
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">Vault Contract</span>
+                        <a href="https://sepolia.etherscan.io/address/0xEAebE827C8A3A4E98dFA802FC719eeBe46f06276" target="_blank" class="info-value link">Open Etherscan</a>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Frontend</span>
+                        <a href="http://localhost:3000" target="_blank" class="info-value link">Open App</a>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Grafana</span>
+                        <a href="http://localhost:3001" target="_blank" class="info-value link">Open Grafana</a>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Prometheus</span>
+                        <a href="http://localhost:9090" target="_blank" class="info-value link">Open Prometheus</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card info-card">
+                <div class="label">Event Feed</div>
+                <h2 class="info-title">Recent Events</h2>
+                <div id="recentEvents">
+                    <div class="event-row">Waiting for simulated vault activity...</div>
+                </div>
+            </article>
+        </section>
+
+        <div class="last-updated">
+            Last updated: <span id="lastUpdated">-</span>
+        </div>
+    </div>
+
+    <script>
+        const VAULT_ADDRESS = '0xEAebE827C8A3A4E98dFA802FC719eeBe46f06276';
+        const RPC_URL = 'https://sepolia.gateway.tenderly.co';
+
+        let ethLockedData = [];
+        let successRateData = [];
+        let timeLabels = [];
+
+        let ethLockedChart;
+        let successRateChart;
+
+        function chartTheme(axisMax) {
+            return {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: { color: '#e6edf6' }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: { color: '#9fb0c3' },
+                        grid: { color: 'rgba(159, 176, 195, 0.12)' }
+                    },
+                    y: {
+                        min: 0,
+                        max: axisMax,
+                        ticks: { color: '#9fb0c3' },
+                        grid: { color: 'rgba(159, 176, 195, 0.12)' }
+                    }
+                }
+            };
+        }
+
+        function initCharts() {
+            const ethCtx = document.getElementById('ethLockedChart').getContext('2d');
+            ethLockedChart = new Chart(ethCtx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: 'ETH Locked',
+                        data: ethLockedData,
+                        borderColor: '#2dd4bf',
+                        backgroundColor: 'rgba(45, 212, 191, 0.12)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35
+                    }]
+                },
+                options: chartTheme(undefined)
+            });
+
+            const successCtx = document.getElementById('successRateChart').getContext('2d');
+            successRateChart = new Chart(successCtx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: 'Success Rate %',
+                        data: successRateData,
+                        borderColor: '#ffb74d',
+                        backgroundColor: 'rgba(255, 183, 77, 0.12)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.35
+                    }]
+                },
+                options: chartTheme(100)
+            });
+        }
+
+        function generateMockData() {
+            const now = new Date();
+
+            for (let i = 30; i >= 0; i--) {
+                const time = new Date(now.getTime() - i * 60000);
+                timeLabels.push(time.toLocaleTimeString());
+                ethLockedData.push(Math.random() * 10 + i * 0.1);
+                successRateData.push(95 + Math.random() * 5);
+            }
+
+            updateUI({
+                totalEthLocked: ethLockedData[ethLockedData.length - 1],
+                successRate: successRateData[successRateData.length - 1],
+                totalDepositors: Math.floor(Math.random() * 50) + 10,
+                currentAPY: 5.0,
+                contractVersion: '1.0.0',
+                blockNumber: 5800000 + Math.floor(Math.random() * 1000),
+                totalTransactions: Math.floor(Math.random() * 200) + 50,
+                successfulTransactions: Math.floor(Math.random() * 190) + 45
+            });
+        }
+
+        function updateUI(data) {
+            document.getElementById('totalEthLocked').textContent = data.totalEthLocked.toFixed(4);
+            document.getElementById('successRate').textContent = data.successRate.toFixed(2);
+            document.getElementById('totalDepositors').textContent = data.totalDepositors;
+            document.getElementById('currentAPY').textContent = data.currentAPY.toFixed(2);
+            document.getElementById('contractVersion').textContent = data.contractVersion;
+            document.getElementById('blockNumber').textContent = data.blockNumber.toLocaleString();
+            document.getElementById('totalTransactions').textContent = data.totalTransactions;
+            document.getElementById('successfulTransactions').textContent = data.successfulTransactions;
+            document.getElementById('failedTransactions').textContent = data.totalTransactions - data.successfulTransactions;
+            document.getElementById('avgDepositSize').textContent =
+                (data.totalEthLocked / data.totalDepositors).toFixed(4) + ' ETH';
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+        }
+
+        function addDataPoint(ethLocked, successRate) {
+            const now = new Date();
+
+            timeLabels.push(now.toLocaleTimeString());
+            ethLockedData.push(ethLocked);
+            successRateData.push(successRate);
+
+            if (timeLabels.length > 30) {
+                timeLabels.shift();
+                ethLockedData.shift();
+                successRateData.shift();
+            }
+
+            ethLockedChart.update();
+            successRateChart.update();
+        }
+
+        function simulateRealTimeUpdates() {
+            setInterval(() => {
+                const lastEthLocked = ethLockedData[ethLockedData.length - 1] || 0;
+                const lastSuccessRate = successRateData[successRateData.length - 1] || 100;
+
+                const newEthLocked = lastEthLocked + (Math.random() - 0.5) * 0.1;
+                const newSuccessRate = Math.max(90, Math.min(100, lastSuccessRate + (Math.random() - 0.5) * 2));
+
+                addDataPoint(Math.max(0, newEthLocked), newSuccessRate);
+
+                updateUI({
+                    totalEthLocked: newEthLocked,
+                    successRate: newSuccessRate,
+                    totalDepositors: Math.floor(Math.random() * 50) + 10,
+                    currentAPY: 5.0,
+                    contractVersion: '1.0.0',
+                    blockNumber: 5800000 + Math.floor(Math.random() * 1000),
+                    totalTransactions: Math.floor(Math.random() * 200) + 50,
+                    successfulTransactions: Math.floor(Math.random() * 190) + 45
+                });
+
+                if (Math.random() < 0.1) {
+                    addRecentEvent(Math.random() < 0.7 ? 'deposit' : 'withdraw');
+                }
+            }, 5000);
+        }
+
+        function addRecentEvent(type) {
+            const eventsContainer = document.getElementById('recentEvents');
+            const time = new Date().toLocaleTimeString();
+            const amount = (Math.random() * 2 + 0.1).toFixed(4);
+
+            const eventDiv = document.createElement('div');
+            eventDiv.className = 'event-row';
+            eventDiv.innerHTML =
+                '<span class="event-time">' + time + '</span>' +
+                (type === 'deposit' ? 'Deposit' : 'Withdrawal') +
+                ': ' + amount + ' ETH';
+
+            eventsContainer.insertBefore(eventDiv, eventsContainer.firstChild);
+
+            while (eventsContainer.children.length > 10) {
+                eventsContainer.removeChild(eventsContainer.lastChild);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+            generateMockData();
+            simulateRealTimeUpdates();
+
+            console.log('ETH Vault Monitoring Dashboard Initialized');
+            console.log('RPC URL:', RPC_URL);
+            console.log('Contract:', VAULT_ADDRESS);
+        });
+    </script>
+</body>
+</html>

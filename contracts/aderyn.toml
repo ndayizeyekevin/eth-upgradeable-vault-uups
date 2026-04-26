@@ -1,0 +1,6 @@
+root = "."
+src = "contracts"
+exclude = ["node_modules", "cache", "artifacts"]
+output = "aderyn_report.md"
+no_snippets = false
+stdout = false

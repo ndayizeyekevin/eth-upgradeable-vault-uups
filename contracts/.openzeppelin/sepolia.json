@@ -1,0 +1,150 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0xbE26B529187562A7B991B46f5637371736BE9ba9",
+      "txHash": "0x818b1369ad032101f276283641712374edfd19d67b92c43a86de2243bf8bd32b",
+      "kind": "uups"
+    },
+    {
+      "address": "0xEAebE827C8A3A4E98dFA802FC719eeBe46f06276",
+      "txHash": "0xc14c5176f198027942f4df00a3652466e85e25e2abca3bb0cc19ae9b6bfd72e1",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "e6b603049aadf9797fc2b12572db8e6c9f94e285ade9913b3515218e9fb0ff91": {
+      "address": "0x063549bf93171b03AF92b540A55b3Cf156A55F95",
+      "txHash": "0xb3d9d1df0328cc20d84bc8dff6985275f7200065c0b1dac849c526bed6bb210c",
+      "layout": {
+        "solcVersion": "0.8.22",
+        "storage": [
+          {
+            "label": "rewardMultiplier",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256",
+            "contract": "VaultV1",
+            "src": "contracts\\VaultV1.sol:18"
+          },
+          {
+            "label": "totalEthLocked",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256",
+            "contract": "VaultV1",
+            "src": "contracts\\VaultV1.sol:19"
+          },
+          {
+            "label": "deposits",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_mapping(t_address,t_struct(UserDeposit)1733_storage)",
+            "contract": "VaultV1",
+            "src": "contracts\\VaultV1.sol:26"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)224_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)13_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          },
+          "t_mapping(t_address,t_struct(UserDeposit)1733_storage)": {
+            "label": "mapping(address => struct VaultV1.UserDeposit)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(UserDeposit)1733_storage": {
+            "label": "struct VaultV1.UserDeposit",
+            "members": [
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "depositTimestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin\\contracts\\proxy\\utils\\Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

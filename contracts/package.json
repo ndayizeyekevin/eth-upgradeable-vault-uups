@@ -1,0 +1,45 @@
+{
+  "name": "eth-vault-contracts",
+  "version": "1.0.0",
+  "description": "UUPS Upgradeable ETH Vault Smart Contracts",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "hardhat compile",
+    "deploy": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:sepolia": "hardhat run scripts/deploy-multichain.js --network sepolia",
+    "deploy:mainnet": "hardhat run scripts/deploy-multichain.js --network mainnet",
+    "deploy:local": "hardhat run scripts/deploy-local.js --network localhost",
+    "upgrade": "hardhat run scripts/upgrade.js --network localhost",
+    "audit": "node scripts/audit.js",
+    "node": "hardhat node",
+    "clean": "hardhat clean",
+    "verify:sepolia": "hardhat verify --network sepolia",
+    "verify:mainnet": "hardhat verify --network mainnet",
+    "check-setup": "node scripts/check-setup.js",
+    "test-rpc": "node scripts/test-rpc.js",
+    "test:upgrade": "hardhat run scripts/tenderly-upgrade-test.js --network sepolia"
+  },
+  "keywords": [
+    "ethereum",
+    "solidity",
+    "hardhat",
+    "uups",
+    "upgradeable",
+    "vault",
+    "defi"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts-upgradeable": "^5.6.1",
+    "@openzeppelin/hardhat-upgrades": "^3.9.1",
+    "hardhat": "^2.28.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.6.1",
+    "dotenv": "^17.4.2"
+  }
+}
