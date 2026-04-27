@@ -79,17 +79,18 @@ contract VaultV1 is
         uint256 totalAmount = userDeposit.amount + reward;
         
         uint256 withdrawAmount;
-        if (amount == 0 || amount >= totalAmount) {
+        if (amount == 0) {
             // Withdraw everything
             withdrawAmount = totalAmount;
             totalEthLocked -= userDeposit.amount;
             delete deposits[msg.sender];
         } else {
-            // Partial withdrawal
-            require(amount <= totalAmount, "Insufficient balance");
+            // Only allow exact or smaller withdrawals
+            require(amount <= totalAmount, "Withdrawal failed: You requested more than your available balance.");
+
             withdrawAmount = amount;
-            
-            // Deduct from principal first, then from rewards
+
+            // Deduct from principal first, then rewards
             if (amount <= userDeposit.amount) {
                 userDeposit.amount -= amount;
                 totalEthLocked -= amount;
@@ -98,7 +99,7 @@ contract VaultV1 is
                 totalEthLocked -= principalUsed;
                 userDeposit.amount = 0;
             }
-            
+
             userDeposit.depositTimestamp = block.timestamp;
         }
         
