@@ -23,7 +23,7 @@ const environments = [
   ['Hardhat RPC', 'localhost:8545'],
   ['Exporter', 'localhost:8080'],
   ['Prometheus', 'localhost:9090'],
-  ['Grafana', 'localhost:3001'],
+  ['Grafana', 'localhost:3002'],
 ]
 
 function App() {
